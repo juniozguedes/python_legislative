@@ -5,7 +5,6 @@ bill)? How many bills did the legislator oppose? ( legislators-support-oppose-co
 opposed the bill? Who was the primary sponsor of the bill?
 """
 import pandas as pd
-from IPython import display
 
 def legislator_supported_oppose():
     vote_results = pd.read_csv('vote_results.csv')
