@@ -19,10 +19,37 @@ def legislator_supported_oppose():
                        .reset_index()
 
     print(result_df)
+    result_df.to_csv('legislators-support-oppose-count.csv')
+
+
+def bill_supported_oppose():
+    vote_results = pd.read_csv('vote_results.csv')
+    legislators = pd.read_csv('legislators.csv')
+    bills = pd.read_csv('bills.csv')
+    votes  = pd.read_csv('votes.csv')
+
+    result_df = bills.merge(votes.rename(columns={"id": "vote_id"}), left_on="id", right_on="bill_id") \
+                    .merge(vote_results.rename(columns={"vote_id": "vote_id2"}).drop("id", axis=1), left_on="vote_id", right_on="vote_id2") \
+                    .groupby(["id","title"]) \
+                    .apply(lambda x: pd.Series({
+                        "supporter_count": len([v for v in x.vote_type if v==1]),
+                        "opposer_count": len([v for v in x.vote_type if v==2]),
+                        })) \
+                    .reset_index()
+
+    # Print the results
+    print(result_df)
+    result_df.to_csv('bills-support-oppose-count.csv')
+
+
 
 def core():
-    print("Bills legislator supported and oppose")
+    print("How many Bills Legislator supported and oppose")
     legislator_supported_oppose()
+
+    print("How many Legislators supported and oppose each Bill")
+    bill_supported_oppose()
+
     return True
 
 if __name__ == "__main__":
